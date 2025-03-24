@@ -1,0 +1,162 @@
+name: Backend Lambda CI/CD
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  GitLeaks:
+    runs-on: ubuntu-latest
+    name: Check for leaked secrets
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: GitLeaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Build:
+    runs-on: ubuntu-latest
+    needs: GitLeaks
+    name: Test and Build Lambda
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: npm
+        cache-dependency-path: 'backend/package-lock.json'
+    
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm install
+    
+    - name: Run tests
+      run: |
+        cd backend
+        npm test
+    
+    - name: Build Lambda package
+      run: |
+        cd backend
+        npm run build
+        # Tạo ZIP package cho Lambda
+        npm prune --production  # Loại bỏ dev dependencies
+        zip -r lambda-package.zip . -x "*.git*" "*.github*" "tests/*" "src/*" "*.ts"
+    
+    - name: Upload Lambda artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lambda-package
+        path: backend/lambda-package.zip
+
+  SAST:
+    runs-on: ubuntu-latest
+    needs: Build
+    name: SAST - SonarCloud
+    steps:
+    - uses: actions/checkout@v4
+          
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.organization=giabao-22520120
+          -Dsonar.projectKey=giabao-22520120_devsecops
+    
+  SCA:
+    runs-on: ubuntu-latest
+    needs: SAST
+    name: SCA Scans
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: |
+          cd backend
+          npm install
+          npm audit --audit-level=high
+      - name: Run Snyk
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Backend'
+          path: 'backend'
+          format: 'HTML'
+          out: 'reports'
+
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: SCA
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    name: Deploy Lambda to AWS
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download Lambda package
+      uses: actions/download-artifact@v4
+      with:
+        name: lambda-package
+        path: backend
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-1
+    
+    - name: Upload to S3
+      run: |
+        # Xác định environment từ branch
+        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
+        aws s3 cp backend/lambda-package.zip s3://your-lambda-bucket-$ENV/lambda-package-${{ github.sha }}.zip
+    
+    - name: Update Lambda function
+      run: |
+        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
+        aws lambda update-function-code \
+          --function-name traceability-backend-$ENV \
+          --s3-bucket your-lambda-bucket-$ENV \
+          --s3-key lambda-package-${{ github.sha }}.zip
+
+  UpdateIaC:
+    runs-on: ubuntu-latest
+    needs: Deploy
+    name: Update Terraform Config
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Update Lambda package reference in Terraform
+      run: |
+        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
+        # Cập nhật file Terraform với S3 key mới
+        sed -i "s|s3_key = \"lambda-package-.*\.zip\"|s3_key = \"lambda-package-${{ github.sha }}.zip\"|g" terraform/environments/$ENV/lambda.tf
+        
+        # Commit và push thay đổi
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "github-actions@github.com"
+        git add terraform/environments/$ENV/lambda.tf
+        git commit -m "Update Lambda package reference [skip ci]"
+        git push
