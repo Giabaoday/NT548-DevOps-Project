@@ -3,17 +3,17 @@ output "vpc_id" {
   value       = module.vpc.vpc_id
 }
 
-output "eks_cluster_name" {
+/*output "eks_cluster_name" {
   description = "Name of the EKS cluster"
   value       = module.eks.cluster_name
-}
+}*/
 
 output "dynamodb_table_name" {
   description = "Name of the DynamoDB table"
-  value       = module.traceability_table.tabel_name
+  value       = module.tracer_table.table_id
 }
 
-output "lambda_functions" {
+/*output "lambda_functions" {
   description = "ARNs of the Lambda functions"
   value = {
     product_service = module.product_service.function_arn
@@ -36,6 +36,7 @@ output "route53_name_servers" {
   description = "Route53 name servers"
   value       = module.route53.name_servers
 }
+*/
 
 output "s3_buckets" {
   description = "S3 bucket names"
