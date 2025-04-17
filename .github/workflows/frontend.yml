@@ -1,0 +1,164 @@
+name: Frontend CI/CD
+on:
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'frontend/**'
+jobs:
+  GitLeaks:
+    runs-on: ubuntu-latest
+    name: Check for leaked secrets
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: GitLeaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Build:
+    runs-on: ubuntu-latest
+    needs: GitLeaks  # Đảm bảo GitLeaks chạy trước
+    name: Unit Test and SAST
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: npm
+    - name: Install dependencies
+      run: npm install
+    - name: Test and coverage
+      run: npm run test
+      
+  SAST:
+    runs-on: ubuntu-latest
+    needs: Build
+    name: SAST - SonarCloud
+    steps:
+    - uses: actions/checkout@v4
+          
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.organization=giabao-22520120
+          -Dsonar.projectKey=giabao-22520120_devsecops
+
+  SCA:
+    runs-on: ubuntu-latest
+    needs: SAST
+    name: SCA Scans
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Snyk
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Frontend'
+          path: 'frontend'
+          format: 'HTML'
+          out: 'reports'
+
+  DAST:
+    runs-on: ubuntu-latest
+    needs: SCA
+    name: DAST - ZAP
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.11.0
+        with:
+          target: 'http://example.com/'
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: DAST
+    name: Build, scan and push docker image to Docker Hub
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      # Build Docker image nhưng chưa push
+      - name: Build Docker image (without pushing)
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          load: true  # Tải image vào Docker local
+          tags: baotg0502/devsecops:latest
+          context: ./frontend  # Đảm bảo điều này trỏ đến thư mục frontend
+      
+      # Scan với Trivy
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'baotg0502/devsecops:latest'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+      
+      # Login và push sau khi scan thành công
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      # Push image lên Docker Hub
+      - name: Push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: baotg0502/devsecops:latest
+          context: ./frontend  # Đảm bảo điều này trỏ đến thư mục frontend
+
+  update-manifest:
+    runs-on: ubuntu-latest
+    needs: docker
+    name: Update Kubernetes Manifests
+    permissions:
+      contents: write  # Cấp quyền ghi vào repository
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Update Kubernetes Deployment
+        run: |
+          # Cập nhật image tag trong file deployment.yaml
+          sed -i "s|image: baotg0502/devsecops:.*|image: baotg0502/devsecops:latest|g" kubernetes/frontend/deployment.yaml
+          
+          # Xem file sau khi thay đổi
+          cat kubernetes/frontend/deployment.yaml
+          
+          # Cấu hình Git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          
+          # Commit và push thay đổi
+          git add kubernetes/frontend/deployment.yaml
+          git commit -m "Update frontend image to latest version [skip ci]"
+          git push
