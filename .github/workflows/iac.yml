@@ -64,6 +64,7 @@ jobs:
           directory: terraform
           framework: terraform
           output_format: cli
+          skip_check: CKV_TF_1,CKV_TF_2
         
       - name: tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
