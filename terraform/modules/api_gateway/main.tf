@@ -2,7 +2,7 @@ module "api_gateway" {
   source = "terraform-aws-modules/apigateway-v2/aws"
 
   name          = "${var.api_name}-${var.environment}"
-  description   = "API Gateway for Product Traceability App - ${upper(var.environment)}"
+  description   = "API Gateway for Product Tracer App - ${upper(var.environment)}"
   protocol_type = "HTTP"
 
   # Cấu hình CORS
@@ -75,7 +75,7 @@ module "api_gateway" {
 
 # Tạo Cloudwatch Log Group cho API Gateway
 resource "aws_cloudwatch_log_group" "api_gateway_logs" {
-  name              = "/aws/apigateway/${var.environment}-traceability-api"
+  name              = "/aws/apigateway/${var.environment}-tracer-api"
   retention_in_days = var.environment == "prod" ? 30 : 7
 
    tags = merge(

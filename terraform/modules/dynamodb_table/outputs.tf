@@ -8,7 +8,7 @@ output "table_id" {
   value       = module.dynamodb_table.table_id
 }
 
-output "tabel_name" {
+output "table_name" {
   description = "The name of the DynamoDB table."
   value       = module.dynamodb_table.table_name
 }
