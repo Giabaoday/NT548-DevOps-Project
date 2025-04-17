@@ -4,7 +4,7 @@ provider "aws" {
 
 # Tạo VPC
 module "vpc" {
-  source = "./modules/vpc"
+  source = "../../modules/vpc"
 
   vpc_name           = "${var.project_name}-vpc-${var.environment}"
   vpc_cidr           = var.vpc_cidr
@@ -21,20 +21,20 @@ module "vpc" {
 
 # Tạo S3 buckets
 module "lambda_deployment_bucket" {
-  source = "./modules/s3"
+  source = "../../modules/s3"
 
   bucket_name = "${var.project_name}-lambda-deployments-${var.environment}"
 }
 
 module "frontend_assets_bucket" {
-  source = "./modules/s3"
+  source = "../../modules/s3"
 
   bucket_name = "${var.project_name}-frontend-assets-${var.environment}"
 }
 
 # Tạo DynamoDB table
-module "traceability_table" {
-  source = "./modules/dynamodb_table"
+module "tracer_table" {
+  source = "../../modules/dynamodb_table"
 
   table_name = "${var.project_name}-data-${var.environment}"
 
