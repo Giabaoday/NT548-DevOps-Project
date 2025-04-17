@@ -77,3 +77,9 @@ variable "cognito_client_id" {
   description = "ID of the Cognito User Pool Client created manually"
   type        = string
 }
+
+variable "kms_key_arn" {
+  description = "ARN of KMS key for CloudWatch Logs encryption"
+  type        = string
+  default     = null
+}

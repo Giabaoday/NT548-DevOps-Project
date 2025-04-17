@@ -1,5 +1,6 @@
 module "api_gateway" {
   source = "terraform-aws-modules/apigateway-v2/aws"
+  version = "5.2.1"
 
   name          = "${var.api_name}-${var.environment}"
   description   = "API Gateway for Product Tracer App - ${upper(var.environment)}"
@@ -76,7 +77,8 @@ module "api_gateway" {
 # Tạo Cloudwatch Log Group cho API Gateway
 resource "aws_cloudwatch_log_group" "api_gateway_logs" {
   name              = "/aws/apigateway/${var.environment}-tracer-api"
-  retention_in_days = var.environment == "prod" ? 30 : 7
+  retention_in_days = var.environment == "prod" ? 365 : 365
+  kms_key_id        = var.kms_key_arn
 
   tags = merge(
     var.tags,
