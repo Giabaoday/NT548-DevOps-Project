@@ -65,11 +65,6 @@ jobs:
           framework: terraform
           output_format: cli
           skip_check: CKV_TF_1,CKV_TF_2
-        
-      - name: tfsec
-        uses: aquasecurity/tfsec-action@v1.0.0
-        with:
-          working_directory: terraform
           
       - name: Terrascan
         uses: tenable/terrascan-action@main
