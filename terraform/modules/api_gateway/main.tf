@@ -78,7 +78,7 @@ resource "aws_cloudwatch_log_group" "api_gateway_logs" {
   name              = "/aws/apigateway/${var.environment}-tracer-api"
   retention_in_days = var.environment == "prod" ? 30 : 7
 
-   tags = merge(
+  tags = merge(
     var.tags,
     {
       Environment = var.environment

@@ -55,23 +55,23 @@ variable "app_version" {
 variable "certificate_arn" {
   description = "ARN of the certificate for API Gateway"
   type        = string
-  default     = ""  # Cần điền ARN của certificate thực tế
+  default     = "" # Cần điền ARN của certificate thực tế
 }
 
 variable "cognito_user_pool_id" {
   description = "ID of the Cognito User Pool"
   type        = string
-  default     = ""  # Cần điền ID thực tế
+  default     = "" # Cần điền ID thực tế
 }
 
 variable "cognito_client_id" {
   description = "ID of the Cognito User Pool Client"
   type        = string
-  default     = ""  # Cần điền Client ID thực tế
+  default     = "" # Cần điền Client ID thực tế
 }
 
 variable "blockchain_endpoint" {
   description = "Endpoint for private blockchain"
   type        = string
-  default     = "http://blockchain-service:8545"  # Sẽ được cấu hình qua Kubernetes service
+  default     = "http://blockchain-service:8545" # Sẽ được cấu hình qua Kubernetes service
 }

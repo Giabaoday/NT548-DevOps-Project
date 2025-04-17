@@ -5,13 +5,13 @@ provider "aws" {
 # Tạo VPC
 module "vpc" {
   source = "./modules/vpc"
-  
+
   vpc_name           = "${var.project_name}-vpc-${var.environment}"
   vpc_cidr           = var.vpc_cidr
   availability_zones = var.availability_zones
   private_subnets    = var.private_subnets
   public_subnets     = var.public_subnets
-  
+
   tags = {
     Environment = var.environment
     Project     = var.project_name
@@ -22,22 +22,22 @@ module "vpc" {
 # Tạo S3 buckets
 module "lambda_deployment_bucket" {
   source = "./modules/s3"
-  
+
   bucket_name = "${var.project_name}-lambda-deployments-${var.environment}"
 }
 
 module "frontend_assets_bucket" {
   source = "./modules/s3"
-  
+
   bucket_name = "${var.project_name}-frontend-assets-${var.environment}"
 }
 
 # Tạo DynamoDB table
 module "traceability_table" {
   source = "./modules/dynamodb_table"
-  
+
   table_name = "${var.project_name}-data-${var.environment}"
-  
+
   tags = {
     Environment = var.environment
     Project     = var.project_name

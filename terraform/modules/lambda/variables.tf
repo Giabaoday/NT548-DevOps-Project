@@ -72,7 +72,7 @@ variable "log_retention_days" {
 variable "reserved_concurrency" {
   description = "Reserved concurrent executions"
   type        = number
-  default     = -1  # -1 means no specific limit
+  default     = -1 # -1 means no specific limit
 }
 
 variable "additional_environment_variables" {

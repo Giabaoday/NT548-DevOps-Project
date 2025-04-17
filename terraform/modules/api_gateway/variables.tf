@@ -49,14 +49,14 @@ variable "lambda_permissions" {
 # Cognito User Pool
 variable "cognito_user_pool_client" {
   description = "Cognito User Pool Client for authorizer"
-  type        = object({
+  type = object({
     id = string
   })
 }
 
 variable "cognito_user_pool" {
   description = "Cognito User Pool for authorizer"
-  type        = object({
+  type = object({
     id = string
   })
 }
