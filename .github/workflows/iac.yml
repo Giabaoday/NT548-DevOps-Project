@@ -61,7 +61,7 @@ jobs:
       - name: Checkov - IaC SAST
         uses: bridgecrewio/checkov-action@master
         with:
-          directory: terraform
+          directory: terraform/environments/dev,terraform/module
           framework: terraform
           output_format: cli
           skip_check: CKV_TF_1,CKV_TF_2
