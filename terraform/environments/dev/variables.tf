@@ -13,7 +13,7 @@ variable "environment" {
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "traceability"
+  default     = "product-tracer"
 }
 
 variable "domain_name" {
