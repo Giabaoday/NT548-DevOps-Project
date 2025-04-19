@@ -45,7 +45,6 @@ module "tracer_table" {
   }
 }
 
-
 /*
 # Tạo Lambda functions
 module "product_service" {
