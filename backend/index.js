@@ -7,7 +7,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: 'Hello from Lambda new!',
+        message: 'Hello from Lambda neww!',
         timestamp: new Date().toISOString()
       })
     };
