@@ -72,9 +72,9 @@ module "api_gateway" {
   environment     = var.environment
   api_name        = "${var.project_name}-api"
   aws_region      = var.aws_region
-  domain_name     = var.domain_name
-  frontend_domain = "https://${var.environment == "prod" ? "" : "${var.environment}."}${var.domain_name}"
-  certificate_arn = var.certificate_arn
+  domain_name     = ""
+  frontend_domain = ""
+  certificate_arn = ""
 
   # Cognito config (được tạo thủ công hoặc bởi module khác)
   cognito_user_pool_id     = var.cognito_user_pool_id
@@ -104,27 +104,3 @@ module "api_gateway" {
   }
 }
 
-# Tạo Route53 records
-module "route53" {
-  source = "../../modules/route53"
-
-  domain_name = var.domain_name
-  environment = var.environment
-
-  api_gateway_domain_name    = module.api_gateway.api_domain_name
-  api_gateway_hosted_zone_id = "Z066569413XP4HXLX3OGW"
-
-  additional_records = [
-    {
-      name    = var.environment == "prod" ? "app" : "${var.environment}-app"
-      type    = "CNAME"
-      ttl     = 300
-      records = ["${var.environment == "prod" ? "" : "${var.environment}-"}app.${var.domain_name}.s3-website.${var.aws_region}.amazonaws.com"]
-    }
-  ]
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-  }
-}
