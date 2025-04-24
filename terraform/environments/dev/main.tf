@@ -92,7 +92,7 @@ module "api_gateway" {
   }
   # Cấp quyền cho API Gateway để gọi Lambda functions
   lambda_permissions = {
-    "lambda_service" = module.lambda_service.function_name
+    "lambda_service" = module.lambda_service.lambda_function_name
   }
 
   tags = {
