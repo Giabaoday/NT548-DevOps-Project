@@ -15,7 +15,7 @@ module "api_gateway" {
     max_age           = 300
   }
 
-  create_domain_name = false
+  create_domain_name    = false
   create_domain_records = false
 
   # Cấu hình domain tùy chọn (nếu cần)
