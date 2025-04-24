@@ -11,7 +11,7 @@ module "lambda_function" {
 
   s3_existing_package = {
     bucket = var.s3_bucket
-    key    = "lambda-packages/${var.function_name}-${var.version}.zip"
+    key    = "lambda-packages/${var.function_name}-${var.app_version}.zip"
   }
 
   environment_variables = merge(

@@ -47,7 +47,7 @@ module "lambda_service" {
   runtime       = "nodejs20.x"
 
   s3_bucket   = module.lambda_deployment_bucket.bucket_name
-  version     = var.app_version
+  app_version     = var.app_version
   environment = var.environment
   region      = var.aws_region
 

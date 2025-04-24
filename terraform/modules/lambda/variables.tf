@@ -25,7 +25,7 @@ variable "s3_bucket" {
   type        = string
 }
 
-variable "version" {
+variable "app_version" {
   description = "Version of the Lambda package"
   type        = string
   default     = "latest"
