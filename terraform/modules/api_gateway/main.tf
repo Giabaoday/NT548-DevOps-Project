@@ -16,8 +16,8 @@ module "api_gateway" {
   }
 
   # Cấu hình domain tùy chọn (nếu cần)
-  domain_name                 = var.environment == "prod" ? "api.${var.domain_name}" : "dev-api.${var.domain_name}"
-  domain_name_certificate_arn = var.certificate_arn
+  #domain_name                 = var.environment == "prod" ? "api.${var.domain_name}" : "dev-api.${var.domain_name}"
+  #domain_name_certificate_arn = var.certificate_arn
 
   # Cấu hình Access Logs
   stage_access_log_settings = {

@@ -72,9 +72,7 @@ module "api_gateway" {
   environment     = var.environment
   api_name        = "${var.project_name}-api"
   aws_region      = var.aws_region
-  domain_name     = ""
   frontend_domain = ""
-  certificate_arn = ""
 
   # Cognito config (được tạo thủ công hoặc bởi module khác)
   cognito_user_pool_id     = var.cognito_user_pool_id
