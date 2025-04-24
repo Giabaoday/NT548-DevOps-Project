@@ -12,23 +12,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Tạo VPC
-module "vpc" {
-  source = "../../modules/vpc"
-
-  vpc_name           = "${var.project_name}-vpc"
-  vpc_cidr           = var.vpc_cidr
-  availability_zones = var.availability_zones
-  private_subnets    = var.private_subnets
-  public_subnets     = var.public_subnets
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-    ManagedBy   = "Terraform"
-  }
-}
-
 # Tạo S3 buckets
 module "lambda_deployment_bucket" {
   source = "../../modules/s3"
@@ -52,6 +35,34 @@ module "tracer_table" {
     Environment = var.environment
     Project     = var.project_name
     ManagedBy   = "Terraform"
+  }
+}
+
+/*
+module "user_service" {
+  source = "../../modules/lambda"
+  
+  function_name = "user-service"
+  description   = "User management service for traceability application"
+  handler       = "index.handler"
+  runtime       = "nodejs20.x"
+  
+  s3_bucket     = module.lambda_deployment_bucket.bucket_name
+  version       = var.app_version
+  environment   = var.environment
+  region        = var.aws_region
+  
+  dynamodb_table = module.traceability_table.tabel_name
+  dynamodb_arn   = module.traceability_table.table_arn
+  
+  additional_environment_variables = {
+    COGNITO_USER_POOL = var.cognito_user_pool_id
+  }
+  
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    Service     = "UserService"
   }
 }
 
@@ -110,33 +121,6 @@ module "trace_service" {
     Environment = var.environment
     Project     = var.project_name
     Service     = "TraceService"
-  }
-}
-
-module "user_service" {
-  source = "./modules/lambda"
-  
-  function_name = "user-service"
-  description   = "User management service for traceability application"
-  handler       = "index.handler"
-  runtime       = "nodejs20.x"
-  
-  s3_bucket     = module.lambda_deployment_bucket.bucket_name
-  version       = var.app_version
-  environment   = var.environment
-  region        = var.aws_region
-  
-  dynamodb_table = module.traceability_table.tabel_name
-  dynamodb_arn   = module.traceability_table.table_arn
-  
-  additional_environment_variables = {
-    COGNITO_USER_POOL = var.cognito_user_pool_id
-  }
-  
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-    Service     = "UserService"
   }
 }
 
@@ -207,21 +191,6 @@ module "api_gateway" {
   tags = {
     Environment = var.environment
     Project     = var.project_name
-  }
-}
-
-# Tạo EKS Cluster
-module "eks" {
-  source = "./modules/eks"
-  
-  cluster_name = "${var.project_name}-eks-${var.environment}"
-  vpc_id       = module.vpc.vpc_id
-  vpc_private_subnet_ids = module.vpc.private_subnets
-  
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-    ManagedBy   = "Terraform"
   }
 }
 
