@@ -1,26 +1,26 @@
 output "api_gateway_id" {
   description = "ID of the API Gateway"
-  value       = module.api_gateway.apigatewayv2_api_id
+  value       = module.api_gateway.api_id
 }
 
 output "api_gateway_arn" {
   description = "ARN of the API Gateway"
-  value       = module.api_gateway.apigatewayv2_api_arn
+  value       = module.api_gateway.api_arn
 }
 
 output "api_gateway_execution_arn" {
   description = "Execution ARN of the API Gateway"
-  value       = module.api_gateway.apigatewayv2_api_execution_arn
+  value       = module.api_gateway.api_execution_arn
 }
 
 output "api_endpoint" {
   description = "API Gateway endpoint URL"
-  value       = module.api_gateway.apigatewayv2_api_api_endpoint
+  value       = module.api_gateway.api_endpoint
 }
 
 output "api_stage_url" {
   description = "Default stage API Gateway URL"
-  value       = module.api_gateway.default_apigatewayv2_stage_invoke_url
+  value       = module.api_gateway.stage_invoke_url
 }
 
 output "api_domain_name" {
@@ -35,5 +35,5 @@ output "cloudwatch_log_group_name" {
 
 output "api_routes" {
   description = "Map of API routes created"
-  value       = module.api_gateway.apigatewayv2_api_mapping
+  value       = module.api_gateway.routes
 }
