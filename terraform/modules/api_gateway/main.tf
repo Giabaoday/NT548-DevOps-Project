@@ -15,6 +15,8 @@ module "api_gateway" {
     max_age           = 300
   }
 
+  create_domain_records = false
+
   # Cấu hình domain tùy chọn (nếu cần)
   #domain_name                 = var.environment == "prod" ? "api.${var.domain_name}" : "dev-api.${var.domain_name}"
   #domain_name_certificate_arn = var.certificate_arn
