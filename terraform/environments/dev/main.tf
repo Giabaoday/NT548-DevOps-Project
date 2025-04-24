@@ -83,9 +83,8 @@ module "api_gateway" {
   routes = {
     "GET /users/me" = {
       integration = {
-        integration_uri    = module.lambda_service.lambda_function_arn
-        integration_type   = "AWS_PROXY"
-        integration_method = "POST"
+        uri                    = module.lambda_service.lambda_function_arn
+        payload_format_version = "2.0"
       }
       authorizer_key = "cognito"
     }
