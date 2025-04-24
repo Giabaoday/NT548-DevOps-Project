@@ -3,9 +3,9 @@ data "aws_route53_zone" "this" {
 }
 
 module "records" {
-  source    = "terraform-aws-modules/route53/aws//modules/records"
-  version   = "~> 3.0"
-  
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 3.0"
+
   zone_id = data.aws_route53_zone.this.zone_id
 
   records = concat(
