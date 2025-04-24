@@ -85,10 +85,12 @@ module "api_gateway" {
   # Định nghĩa các routes
   routes = {
     "GET /users/me" = {
-      integration_uri    = module.lambda_service.invoke_arn
-      integration_type   = "AWS_PROXY"
-      integration_method = "POST"
-      authorizer_key     = "cognito"
+      integration = {
+        integration_uri    = module.lambda_service.invoke_arn
+        integration_type   = "AWS_PROXY"
+        integration_method = "POST"
+      }
+      authorizer_key = "cognito"
     }
   }
   # Cấp quyền cho API Gateway để gọi Lambda functions
@@ -102,7 +104,7 @@ module "api_gateway" {
   }
 }
 
-/*# Tạo Route53 records
+# Tạo Route53 records
 module "route53" {
   source = "../../modules/route53"
 
@@ -110,7 +112,7 @@ module "route53" {
   environment = var.environment
 
   api_gateway_domain_name    = module.api_gateway.api_domain_name
-  api_gateway_hosted_zone_id = "Z2FDTNDATAQYW2"
+  api_gateway_hosted_zone_id = "Z066569413XP4HXLX3OGW"
 
   additional_records = [
     {
@@ -125,4 +127,4 @@ module "route53" {
     Environment = var.environment
     Project     = var.project_name
   }
-}*/
+}
