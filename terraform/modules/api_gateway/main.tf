@@ -8,10 +8,10 @@ module "api_gateway" {
 
   # Cấu hình CORS
   cors_configuration = {
-    allow_headers     = ["Content-Type", "Authorization", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token"]
-    allow_methods     = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    allow_origins     = var.environment == "prod" ? [var.frontend_domain] : ["*"]
-    max_age           = 300
+    allow_headers = ["Content-Type", "Authorization", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token"]
+    allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    allow_origins = var.environment == "prod" ? [var.frontend_domain] : ["*"]
+    max_age       = 300
   }
 
   create_domain_name    = false
