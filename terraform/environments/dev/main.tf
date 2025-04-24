@@ -51,8 +51,8 @@ module "lambda_service" {
   environment = var.environment
   region      = var.aws_region
 
-  dynamodb_table = module.tracer_table.dynamodb_table_id
-  dynamodb_arn   = module.tracer_table.dynamodb_table_arn
+  dynamodb_table = module.tracer_table.table_id
+  dynamodb_arn   = module.tracer_table.table_arn
 
   additional_environment_variables = {
     COGNITO_USER_POOL = var.cognito_user_pool_id
