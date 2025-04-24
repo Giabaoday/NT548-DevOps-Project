@@ -55,19 +55,19 @@ variable "app_version" {
 variable "certificate_arn" {
   description = "ARN of the certificate for API Gateway"
   type        = string
-  default     = "" # Cần điền ARN của certificate thực tế
+  default     = ""
 }
 
 variable "cognito_user_pool_id" {
   description = "ID of the Cognito User Pool"
   type        = string
-  default     = "" # Cần điền ID thực tế
+  default     = "ap-southeast-1_5BnOOGI8v"
 }
 
 variable "cognito_client_id" {
   description = "ID of the Cognito User Pool Client"
   type        = string
-  default     = "" # Cần điền Client ID thực tế
+  default     = "2qkqfoug89p9qhfggcsflg4m24"
 }
 
 variable "blockchain_endpoint" {

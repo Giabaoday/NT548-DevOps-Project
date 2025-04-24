@@ -38,13 +38,11 @@ module "tracer_table" {
   }
 }
 
-
-/*
-module "user_service" {
+module "lambda_service" {
   source = "../../modules/lambda"
   
-  function_name = "user-service"
-  description   = "User management service for traceability application"
+  function_name = "lambda_service"
+  description   = "Service for product tracer application"
   handler       = "index.handler"
   runtime       = "nodejs20.x"
   
@@ -53,17 +51,17 @@ module "user_service" {
   environment   = var.environment
   region        = var.aws_region
   
-  dynamodb_table = module.traceability_table.tabel_name
-  dynamodb_arn   = module.traceability_table.table_arn
+  dynamodb_table = module.tracer_table.tabel_name
+  dynamodb_arn   = module.tracer_table.table_arn
   
   additional_environment_variables = {
     COGNITO_USER_POOL = var.cognito_user_pool_id
+    COGNITO_CLIENT_ID  = var.cognito_client_id
   }
   
   tags = {
     Environment = var.environment
     Project     = var.project_name
-    Service     = "UserService"
   }
 }
 
