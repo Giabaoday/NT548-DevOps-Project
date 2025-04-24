@@ -83,7 +83,7 @@ module "api_gateway" {
   routes = {
     "GET /users/me" = {
       integration = {
-        integration_uri    = module.lambda_service.invoke_arn
+        integration_uri    = module.lambda_service.lambda_function_arn
         integration_type   = "AWS_PROXY"
         integration_method = "POST"
       }
