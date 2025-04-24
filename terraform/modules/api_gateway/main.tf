@@ -11,7 +11,6 @@ module "api_gateway" {
     allow_headers     = ["Content-Type", "Authorization", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token"]
     allow_methods     = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allow_origins     = var.environment == "prod" ? [var.frontend_domain] : ["*"]
-    allow_credentials = true
     max_age           = 300
   }
 
