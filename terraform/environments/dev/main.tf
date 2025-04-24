@@ -69,9 +69,9 @@ module "lambda_service" {
 module "api_gateway" {
   source = "../../modules/api_gateway"
 
-  environment     = var.environment
-  api_name        = "${var.project_name}-api"
-  aws_region      = var.aws_region
+  environment = var.environment
+  api_name    = "${var.project_name}-api"
+  aws_region  = var.aws_region
 
   # Cognito config (được tạo thủ công hoặc bởi module khác)
   cognito_user_pool_id     = var.cognito_user_pool_id
