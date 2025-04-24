@@ -135,11 +135,10 @@ jobs:
     - name: Upload to S3
       run: |
         # Xác định environment từ branch
-        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
-        PROJECT_NAME=$(grep -r "project_name" terraform/environments/$ENV/variables.tf | head -1 | awk -F'"' '{print $2}' || echo "product-tracer")
+        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev") 
         
         # Xác định tên bucket từ Terraform
-        BUCKET_NAME="${PROJECT_NAME}-lambda-deployments-${ENV}"
+        BUCKET_NAME="product-tracer-lambda-deployments-${ENV}"
         VERSION="${{ github.sha }}"
         
         # Upload Lambda package
@@ -149,9 +148,7 @@ jobs:
       run: |
         ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
         
-        # Xác định các thông tin cần thiết
-        PROJECT_NAME=$(grep -r "project_name" terraform/environments/$ENV/variables.tf | head -1 | awk -F'"' '{print $2}' || echo "product-tracer")
-        BUCKET_NAME="${PROJECT_NAME}-lambda-deployments-${ENV}"
+        BUCKET_NAME="product-tracer-lambda-deployments-${ENV}"
         FUNCTION_NAME="lambda_service-${ENV}"
         VERSION="${{ github.sha }}"
         
