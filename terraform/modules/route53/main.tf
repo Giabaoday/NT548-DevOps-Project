@@ -1,28 +1,12 @@
-module "zones" {
-  source  = "terraform-aws-modules/route53/aws//modules/zones"
-  version = "~> 5.0"
-
-  zones = {
-    "${var.domain_name}" = {
-      comment = "${var.domain_name} (${var.environment})"
-      tags = {
-        Environment = var.environment
-      }
-    }
-  }
-
-  tags = merge(
-    var.tags,
-    {
-      ManagedBy = "Terraform"
-    }
-  )
+data "aws_route53_zone" "this" {
+  name = var.domain_name
 }
 
 module "records" {
   source    = "terraform-aws-modules/route53/aws//modules/records"
   version   = "~> 3.0"
-  zone_name = keys(module.zones.route53_zone_zone_id)[0]
+  
+  zone_id = data.aws_route53_zone.this.zone_id
 
   records = concat(
     # API Gateway records
@@ -40,6 +24,4 @@ module "records" {
     # Các records khác nếu cần
     var.additional_records
   )
-
-  depends_on = [module.zones]
 }
