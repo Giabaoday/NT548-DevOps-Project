@@ -40,25 +40,25 @@ module "tracer_table" {
 
 module "lambda_service" {
   source = "../../modules/lambda"
-  
+
   function_name = "lambda_service"
   description   = "Service for product tracer application"
   handler       = "index.handler"
   runtime       = "nodejs20.x"
-  
-  s3_bucket     = module.lambda_deployment_bucket.bucket_name
-  version       = var.app_version
-  environment   = var.environment
-  region        = var.aws_region
-  
+
+  s3_bucket   = module.lambda_deployment_bucket.bucket_name
+  version     = var.app_version
+  environment = var.environment
+  region      = var.aws_region
+
   dynamodb_table = module.tracer_table.tabel_name
   dynamodb_arn   = module.tracer_table.table_arn
-  
+
   additional_environment_variables = {
     COGNITO_USER_POOL = var.cognito_user_pool_id
-    COGNITO_CLIENT_ID  = var.cognito_client_id
+    COGNITO_CLIENT_ID = var.cognito_client_id
   }
-  
+
   tags = {
     Environment = var.environment
     Project     = var.project_name
