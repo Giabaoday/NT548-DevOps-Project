@@ -87,7 +87,41 @@ module "api_gateway" {
         payload_format_version = "2.0"
       }
       authorizer_key = "cognito"
-    }
+    },
+    "POST /users/register" = {
+      integration = {
+        uri                    = module.lambda_service.lambda_function_arn
+        payload_format_version = "2.0"
+      }
+      authorizer_key = "cognito"
+    },
+    "GET /dishes" = {
+      integration = {
+        uri                    = module.lambda_service.lambda_function_arn
+        payload_format_version = "2.0"
+      }
+      authorizer_key = "cognito"
+    },
+    "POST /dishes" = {
+      integration = {
+        uri                    = module.lambda_service.lambda_function_arn
+        payload_format_version = "2.0"
+      }
+      authorizer_key = "cognito"
+    },
+    "GET /dishes/random" = {
+      integration = {
+        uri                    = module.lambda_service.lambda_function_arn
+        payload_format_version = "2.0"
+      }
+      authorizer_key = "cognito"
+    },
+    "GET /dishes/{id}" = {
+      integration = {
+        uri                    = module.lambda_service.lambda_function_arn
+        payload_format_version = "2.0"
+      }
+    authorizer_key = "cognito" }
   }
   # Cấp quyền cho API Gateway để gọi Lambda functions
   lambda_permissions = {
