@@ -133,27 +133,3 @@ module "api_gateway" {
     Project     = var.project_name
   }
 }
-
-data "terraform_remote_state" "common" {
-  backend = "s3"
-  config = {
-    bucket         = "remote-backend-s3-giabao22520120"
-    key            = "common/terraform.tfstate"
-    region         = "ap-southeast-1"
-    dynamodb_table = "remote-backend-locks"
-    encrypt        = true
-  }
-}
-
-module "eks" {
-  source = "../../modules/eks"
-
-  vpc_id                 = data.terraform_remote_state.common.outputs.vpc_id
-  vpc_private_subnet_ids = data.terraform_remote_state.common.outputs.private_subnet_ids
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-
-  }
-}
