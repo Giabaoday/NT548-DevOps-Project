@@ -13,13 +13,16 @@ module "eks" {
     vpc-cni                = {}
   }
 
+  cluster_endpoint_public_access           = true
+  enable_cluster_creator_admin_permissions = true
+
   vpc_id     = var.vpc_id
   subnet_ids = var.vpc_private_subnet_ids
 
   eks_managed_node_groups = {
     appnodegroup = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 2
@@ -28,7 +31,7 @@ module "eks" {
 
     blockchainnodegroup = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 2
@@ -37,7 +40,7 @@ module "eks" {
 
     monitoringnodegroup = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 2
@@ -46,7 +49,7 @@ module "eks" {
 
     argocdnodegroup = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 2
