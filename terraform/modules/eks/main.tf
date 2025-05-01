@@ -21,8 +21,8 @@ module "eks" {
 
   eks_managed_node_groups = {
     appnodegroup = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
+      ami_type       = "AL2_x86_64"
+      instance_types = ["t3.micro"]
 
       min_size     = 1
       max_size     = 2
@@ -30,8 +30,8 @@ module "eks" {
     }
 
     blockchainnodegroup = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
+      ami_type       = "AL2_x86_64"
+      instance_types = ["t3.micro"]
 
       min_size     = 1
       max_size     = 2
@@ -39,8 +39,8 @@ module "eks" {
     }
 
     monitoringnodegroup = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
+      ami_type       = "AL2_x86_64"
+      instance_types = ["t3.micro"]
 
       min_size     = 1
       max_size     = 2
@@ -48,8 +48,8 @@ module "eks" {
     }
 
     argocdnodegroup = {
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.medium"]
+      ami_type       = "AL2_x86_64"
+      instance_types = ["t3.micro"]
 
       min_size     = 1
       max_size     = 2
