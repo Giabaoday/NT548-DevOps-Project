@@ -28,3 +28,18 @@ module "vpc" {
     ManagedBy   = "Terraform"
   }
 }
+
+module "eks" {
+  source = "../modules/eks"
+
+  cluster_name           = "${var.project_name}-eks"
+  vpc_id                 = module.vpc.vpc_id
+  vpc_private_subnet_ids = module.vpc.private_subnets
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+    Application = "Product Traceability"
+  }
+}
