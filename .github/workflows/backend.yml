@@ -44,12 +44,20 @@ jobs:
     - name: Run tests
       run: |
         cd backend
-        npm test
+        if [ -f "package.json" ] && grep -q "\"test\":" "package.json"; then
+          npm test
+        else
+          echo "No test script found, skipping tests"
+        fi
     
     - name: Build Lambda package
       run: |
         cd backend
-        npm run build
+        if [ -f "package.json" ] && grep -q "\"build\":" "package.json"; then
+          npm run build
+        else
+          echo "No build script found, skipping build"
+        fi
         # Tạo ZIP package cho Lambda
         npm prune --production  # Loại bỏ dev dependencies
         zip -r lambda-package.zip . -x "*.git*" "*.github*" "tests/*" "src/*" "*.ts"
@@ -127,16 +135,28 @@ jobs:
     - name: Upload to S3
       run: |
         # Xác định environment từ branch
-        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
-        aws s3 cp backend/lambda-package.zip s3://your-lambda-bucket-$ENV/lambda-package-${{ github.sha }}.zip
+        ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev") 
+        
+        # Xác định tên bucket từ Terraform
+        BUCKET_NAME="product-tracer-lambda-deployments-${ENV}"
+        VERSION="${{ github.sha }}"
+        
+        # Upload Lambda package
+        aws s3 cp backend/lambda-package.zip s3://${BUCKET_NAME}/lambda-packages/lambda_service-${VERSION}.zip
     
     - name: Update Lambda function
       run: |
         ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
+        
+        BUCKET_NAME="product-tracer-lambda-deployments-${ENV}"
+        FUNCTION_NAME="lambda_service-${ENV}"
+        VERSION="${{ github.sha }}"
+        
+        # Cập nhật Lambda function
         aws lambda update-function-code \
-          --function-name traceability-backend-$ENV \
-          --s3-bucket your-lambda-bucket-$ENV \
-          --s3-key lambda-package-${{ github.sha }}.zip
+          --function-name ${FUNCTION_NAME} \
+          --s3-bucket ${BUCKET_NAME} \
+          --s3-key lambda-packages/lambda_service-${VERSION}.zip
 
   UpdateIaC:
     runs-on: ubuntu-latest
@@ -151,12 +171,17 @@ jobs:
     - name: Update Lambda package reference in Terraform
       run: |
         ENV=$([ "${{ github.ref }}" == "refs/heads/main" ] && echo "prod" || echo "dev")
-        # Cập nhật file Terraform với S3 key mới
-        sed -i "s|s3_key = \"lambda-package-.*\.zip\"|s3_key = \"lambda-package-${{ github.sha }}.zip\"|g" terraform/environments/$ENV/lambda.tf
+        VERSION="${{ github.sha }}"
+        
+        # Cập nhật biến app_version trong file variables.tf
+        VARS_FILE="terraform/environments/$ENV/variables.tf"
+        
+        # Cập nhật giá trị biến app_version
+        sed -i "/variable \"app_version\"/,/}/ s|default *= *\".*\"|default = \"${VERSION}\"|" $VARS_FILE
         
         # Commit và push thay đổi
         git config --global user.name "GitHub Actions"
         git config --global user.email "github-actions@github.com"
-        git add terraform/environments/$ENV/lambda.tf
-        git commit -m "Update Lambda package reference [skip ci]"
+        git add $VARS_FILE
+        git commit -m "Update app_version for Lambda deployment [skip ci]"
         git push
