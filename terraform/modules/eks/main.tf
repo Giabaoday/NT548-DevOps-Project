@@ -5,7 +5,6 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = "1.31"
 
-  bootstrap_self_managed_addons = false
   cluster_addons = {
     coredns                = {}
     eks-pod-identity-agent = {}
@@ -21,25 +20,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     appnodegroup = {
-      ami_type       = "AL2_x86_64"
-      instance_types = ["t3.micro"]
-
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
-    }
-
-    blockchainnodegroup = {
-      ami_type       = "AL2_x86_64"
-      instance_types = ["t3.micro"]
-
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
-    }
-
-    monitoringnodegroup = {
-      ami_type       = "AL2_x86_64"
+      ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["t3.micro"]
 
       min_size     = 1
@@ -48,7 +29,7 @@ module "eks" {
     }
 
     argocdnodegroup = {
-      ami_type       = "AL2_x86_64"
+      ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = ["t3.micro"]
 
       min_size     = 1
