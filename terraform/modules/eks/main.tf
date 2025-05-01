@@ -30,7 +30,7 @@ module "eks" {
 
     argocdnodegroup = {
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.micro"]
+      instance_types = ["t3.small"]
 
       min_size     = 1
       max_size     = 3
