@@ -29,6 +29,7 @@ module "vpc" {
   }
 }
 
+#Tạo eks cluster
 module "eks" {
   source = "../modules/eks"
 
