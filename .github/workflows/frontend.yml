@@ -127,7 +127,7 @@ jobs:
           load: true
           build-args: |
             API_URL=https://vvbcaer9bc.execute-api.ap-southeast-1.amazonaws.com/default
-          tags:
+          tags: |
             baotg0502/devsecops:latest
             baotg0502/devsecops:${{ steps.vars.outputs.sha_short }}
           context: ./frontend
@@ -155,7 +155,7 @@ jobs:
           push: true
           build-args: |
             API_URL=https://vvbcaer9bc.execute-api.ap-southeast-1.amazonaws.com/default
-          tags:
+          tags: |
             baotg0502/devsecops:latest
             baotg0502/devsecops:${{ steps.vars.outputs.sha_short }}
           context: ./frontend
