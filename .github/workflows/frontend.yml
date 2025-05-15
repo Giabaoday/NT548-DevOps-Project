@@ -95,7 +95,7 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.11.0
         with:
-          target: 'https://dev.product-tracer.com/'
+          target: 'http://example.com/'
           allow_issue_writing: false
           fail_action: false
 
