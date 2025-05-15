@@ -16,7 +16,7 @@ RUN echo "window.env = { API_URL: '${API_URL:-https://vvbcaer9bc.execute-api.ap-
 RUN npm run build
 
 # Production image
-FROM nginx:1.25.4-alpine3.19
+FROM nginx:stable-alpine
 
 RUN apk update && apk upgrade libxml2
 
