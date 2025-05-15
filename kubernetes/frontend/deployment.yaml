@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: whattoeat-frontend
-        image: baotg0502/devsecops:latest
+        image: baotg0502/devsecops:83e7f72
         ports:
         - containerPort: 80
         resources:
