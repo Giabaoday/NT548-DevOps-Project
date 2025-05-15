@@ -94,10 +94,12 @@ jobs:
           ref: main
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.11.0
+        continue-on-error: true
         with:
           target: 'http://example.com/'
           allow_issue_writing: false
           fail_action: false
+          artifact_name: 'zap-scan-report'
 
   docker:
     runs-on: ubuntu-latest
