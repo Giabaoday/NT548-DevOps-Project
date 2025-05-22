@@ -99,7 +99,7 @@ jobs:
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+        SONAR_TOKEN: ${{ env.DEVSECOPS_TOKENS_SONAR_TOKEN }}
       with:
         args: >
           -Dsonar.organization=giabao-22520120
@@ -137,7 +137,7 @@ jobs:
         uses: snyk/actions/node@master
         continue-on-error: true
         env:
-          SNYK_TOKEN: ${{ env.SNYK_TOKEN_SNYK_TOKEN }}
+          SNYK_TOKEN: ${{ env.DEVSECOPS_TOKENS_SNYK_TOKEN }}
       
       - name: OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
