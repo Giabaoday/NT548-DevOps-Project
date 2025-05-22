@@ -392,7 +392,7 @@ export default function App() {
                     className={`flex items-center w-full px-4 py-2 rounded-md ${activeTab === 'my-dishes' ? 'bg-orange-100 text-orange-700' : 'text-gray-600 hover:bg-gray-100'}`}
                     onClick={() => setActiveTab('my-dishes')}
                   >
-                    Món ăn của tôi !!!
+                    Món ăn của tôi !!!!!!!!
                   </button>
                 </li>
                 <li>
